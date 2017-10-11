@@ -1,0 +1,199 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (United States) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif //_WIN32\r\n"
+    "#include ""res\\BarCode.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "res\\BarCode.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+DLG_MAIN DIALOGEX 0, 0, 585, 139
+STYLE DS_SETFONT | WS_POPUP | WS_VISIBLE
+EXSTYLE WS_EX_APPWINDOW
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    CONTROL         "H",BTN_HIDE,"Button",BS_OWNERDRAW | WS_TABSTOP,578,2,7,6
+    COMBOBOX        CMB_STYLE,474,5,60,126,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        CMB_MAPMODE,462,23,78,126,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        ED_MOVE,485,62,19,13,ES_AUTOHSCROLL
+    EDITTEXT        ED_PENW,548,62,22,13,ES_AUTOHSCROLL
+    EDITTEXT        ED_CODE,431,45,146,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "Help",BTN_HELP,549,23,28,12
+    PUSHBUTTON      "X",BTN_CLOSE,549,2,28,15
+    LTEXT           "Pen width",IDC_STATIC,515,67,32,8
+    LTEXT           "Style",IDC_STATIC,442,9,16,8
+    LTEXT           "Map",IDC_STATIC,439,27,15,8
+    LTEXT           "Move",IDC_STATIC,461,67,19,8
+    LTEXT           "Code",IDC_STATIC,407,49,18,8
+    PUSHBUTTON      "Send",IDC_send,431,83,50,14
+    EDITTEXT        IDC_REPEAT,487,83,40,14,ES_AUTOHSCROLL
+    LTEXT           "Times",IDC_STATIC,538,89,26,8
+    CONTROL         "",IDC_IP_BOARD,"SysIPAddress32",WS_TABSTOP,466,105,100,15
+    LTEXT           "Board",IDC_STATIC,433,112,26,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "FileDescription", "BarCode MFC Application"
+            VALUE "FileVersion", "1, 0, 0, 1"
+            VALUE "InternalName", "BarCode"
+            VALUE "LegalCopyright", "Copyright (C) 2006"
+            VALUE "OriginalFilename", "BarCode.EXE"
+            VALUE "ProductName", "BarCode Application"
+            VALUE "ProductVersion", "1, 0, 0, 1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    DLG_MAIN, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 578
+        TOPMARGIN, 2
+        BOTTOMMARGIN, 137
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+MU_MAIN MENU
+BEGIN
+    POPUP "MU_MAIN"
+    BEGIN
+        MENUITEM "Print by drawing",            M0_PRINTBYDRAW
+        MENUITEM "Print by bitmap",             M0_PRINTBYBMP
+        MENUITEM SEPARATOR
+        MENUITEM "Test",                        M0_TEST
+    END
+END
+
+#endif    // English (United States) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#endif //_WIN32
+#include "res\BarCode.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"         // Standard components
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
