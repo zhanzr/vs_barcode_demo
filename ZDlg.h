@@ -14,6 +14,56 @@
 
 #define	UDP_DATA_PORT	8090
 
+
+typedef struct strSimpleBMP16Header{
+		uint32_t FileSize;//DataOff+Wid*Hgt*2
+		uint16_t unused1;
+		uint16_t unused2;
+		uint32_t DataOff;//InfoSize + 0x16 always
+
+		uint32_t InfoSize;//always 0x28
+		uint32_t Wid;
+		uint32_t Hgt;
+		uint16_t PaneNum;//always 1
+		uint16_t ColorDepth;//always 0x10
+
+		uint32_t CompressMethod;//Always BI_BITFIELDS for simplification
+		uint32_t BitSize;// Wid*Hgt*2, Including Padding 4Byte
+		uint32_t XDPI;//Always 0x0B13 for simplification
+		uint32_t YDPI;//Always 0x0B13 for simplification
+		uint32_t ColorInPlatte;//0 for simplification
+		uint32_t ImportantColor;//0 for simplification
+		
+		//uint32_t R_Mask;//0xF800
+		//uint32_t G_Mask;//0x07E0
+		//uint32_t B_Mask;//0x001F
+		uint32_t Bit_Mask;//0
+		uint32_t A_Mask;//0x00FFFFFF;		
+}SimpleBMP16Header;
+
+//For BMP screen shot output
+#define BI_RGB	0
+#define BI_BITFIELDS	3
+#define CI_12_FORMAT    0x03
+#define CI_16_FORMAT    0x05
+#define CI_18_FORMAT    0x06
+
+#define BLACK16 0x0000
+#define WHITE16 0xffff
+#define RED16   0xf800
+#define CYNK16   0x4ffc
+#define GREEN16 0x07e0
+#define BLUE16  0x001f
+#define LIGHT_BLUE16  0x067f
+#define GREEN_YELLOW16  0xb7e6
+
+#define LCD_WID ((uint16_t)320)
+#define LCD_HGT ((uint16_t)240)
+#define LCD_W LCD_WID
+#define LCD_H LCD_HGT
+#define LCD_PTS_TOTAL	((uint32_t)LCD_W*LCD_H)
+#define TEST_DPT	1	//16
+
 class ZDlg : public CDialog
 {
 // Construction
