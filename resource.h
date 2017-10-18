@@ -24,8 +24,13 @@
 #define ED_HEIGHT                       1020
 #define IDC_send                        1020
 #define IDC_REPEAT                      1021
-#define IDC_IPADDRESS1                  1022
 #define IDC_IP_BOARD                    1022
+#define IDC_PAT0                        1024
+#define IDC_PAT1                        1025
+#define IDC_PAT2                        1026
+#define IDC_PAT3                        1027
+#define IDC_PAT4                        1028
+#define IDC_PAT5                        1029
 #define M0_PRINTBYDRAW                  32771
 #define M0_TEST                         32772
 #define M0_PRINTBYBMP                   32773
@@ -36,7 +41,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        132
 #define _APS_NEXT_COMMAND_VALUE         32774
-#define _APS_NEXT_CONTROL_VALUE         1023
+#define _APS_NEXT_CONTROL_VALUE         1025
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

@@ -20,6 +20,7 @@ ZDlg::ZDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(ZDlg::IDD, pParent)
 	, m_SendTime(0)
 	, m_BoardIP(0)
+	, m_Pat(0)
 {
 	//{{AFX_DATA_INIT(ZDlg)
 	//}}AFX_DATA_INIT
@@ -41,7 +42,7 @@ void ZDlg::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 	DDX_Text(pDX, IDC_REPEAT, m_SendTime);
 	DDV_MinMaxUInt(pDX, m_SendTime, 1, 100000);
-	DDX_IPAddress(pDX, IDC_IPADDRESS1, m_BoardIP);
+	DDX_IPAddress(pDX, IDC_IP_BOARD, m_BoardIP);
 }
 
 BEGIN_MESSAGE_MAP(ZDlg, CDialog)
@@ -61,6 +62,12 @@ BEGIN_MESSAGE_MAP(ZDlg, CDialog)
 	ON_BN_CLICKED(IDC_send, &ZDlg::OnBnClickedsend)
 	ON_EN_UPDATE(IDC_REPEAT, &ZDlg::OnEnUpdateRepeat)
 	ON_EN_CHANGE(IDC_REPEAT, &ZDlg::OnEnChangeRepeat)
+	ON_BN_CLICKED(IDC_PAT0, &ZDlg::OnBnClickedPat0)
+	ON_BN_CLICKED(IDC_PAT1, &ZDlg::OnBnClickedPat1)
+	ON_BN_CLICKED(IDC_PAT2, &ZDlg::OnBnClickedPat2)
+	ON_BN_CLICKED(IDC_PAT3, &ZDlg::OnBnClickedPat3)
+	ON_BN_CLICKED(IDC_PAT4, &ZDlg::OnBnClickedPat4)
+	ON_BN_CLICKED(IDC_PAT5, &ZDlg::OnBnClickedPat5)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -384,7 +391,7 @@ void ZDlg::OnBnClickedsend()
 
 	CaptureScreen(csStyle + "_" + csCode + "_" + tmpStr);
 
-	CaptureScreenMono("m_" + csStyle + "_" + csCode + "_" + tmpStr);
+	//CaptureScreenMono("m_" + csStyle + "_" + csCode + "_" + tmpStr);
 }
 
 void ZDlg::OnEnUpdateRepeat()
@@ -398,77 +405,85 @@ void ZDlg::OnEnChangeRepeat()
 
 void ZDlg::CaptureScreen(const char* filename) 
 { 
-#define	BMP_DEPTH	24
-	// get screen rectangle 
-	RECT windowRect; 
-	GetWindowRect(&windowRect); 
-
-	// bitmap dimensions 
-	auto bitmap_dx = windowRect.right - windowRect.left; 
-	//auto bitmap_dx = m_lastWdt * 2; 
-	auto bitmap_dy = windowRect.bottom - windowRect.top; 
-
-	// create file 
-	ofstream file(filename, ios::binary); 
-	if(!file) 
-		return; 
-
-	// save bitmap file headers 
-	BITMAPFILEHEADER fileHeader; 
-	BITMAPINFOHEADER infoHeader; 
-
-	fileHeader.bfType      = 0x4d42; 
-	fileHeader.bfSize      = 0; 
-	fileHeader.bfReserved1 = 0; 
-	fileHeader.bfReserved2 = 0; 
-	fileHeader.bfOffBits   = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER); 
-
-	infoHeader.biSize          = sizeof(infoHeader); 
-	infoHeader.biWidth         = bitmap_dx; 
-	infoHeader.biHeight        = bitmap_dy; 
-	infoHeader.biPlanes        = 1; 
-	infoHeader.biBitCount      = BMP_DEPTH; 
-	infoHeader.biCompression   = BI_RGB; 
-	infoHeader.biSizeImage     = 0; 
-	infoHeader.biXPelsPerMeter = 0; 
-	infoHeader.biYPelsPerMeter = 0; 
-	infoHeader.biClrUsed       = 0; 
-	infoHeader.biClrImportant  = 0; 
-
-	file.write((char*)&fileHeader, sizeof(fileHeader)); 
-	file.write((char*)&infoHeader, sizeof(infoHeader)); 
-
-	// dibsection information 
-	BITMAPINFO info; 
-	info.bmiHeader = infoHeader;  
-
-	// ------------------ 
-	// THE IMPORTANT CODE 
-	// ------------------ 
-	// create a dibsection and blit the window contents to the bitmap 
-	auto winDC = GetWindowDC(); 
-	auto memDC = CreateCompatibleDC(winDC->m_hDC); 
-	BYTE* memory = 0; 
-	HBITMAP bitmap = CreateDIBSection(winDC->m_hDC, &info, DIB_RGB_COLORS, (void**)&memory, 0, 0); 
-	SelectObject(memDC, bitmap); 
-	BitBlt(memDC, 0, 0, bitmap_dx, bitmap_dy, winDC->m_hDC, 0, 0, SRCCOPY); 
-	DeleteDC(memDC); 
-	ReleaseDC(winDC); 
-
-	// save dibsection data 
-	int bytes = (((BMP_DEPTH*bitmap_dx + 31) & (~31))/8)*bitmap_dy; 
-	file.write((const char*)memory, bytes); 
-	file.close();
-	DeleteObject(bitmap); 
+//#define	BMP_DEPTH	24
+//	// get screen rectangle 
+//	RECT windowRect; 
+//	GetWindowRect(&windowRect); 
+//
+//	// bitmap dimensions 
+//	auto bitmap_dx = windowRect.right - windowRect.left; 
+//	//auto bitmap_dx = m_lastWdt * 2; 
+//	auto bitmap_dy = windowRect.bottom - windowRect.top; 
+//
+//	// create file 
+//	ofstream file(filename, ios::binary); 
+//	if(!file) 
+//		return; 
+//
+//	// save bitmap file headers 
+//	BITMAPFILEHEADER fileHeader; 
+//	BITMAPINFOHEADER infoHeader; 
+//
+//	fileHeader.bfType      = 0x4d42; 
+//	fileHeader.bfSize      = 0; 
+//	fileHeader.bfReserved1 = 0; 
+//	fileHeader.bfReserved2 = 0; 
+//	fileHeader.bfOffBits   = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER); 
+//
+//	infoHeader.biSize          = sizeof(infoHeader); 
+//	infoHeader.biWidth         = bitmap_dx; 
+//	infoHeader.biHeight        = bitmap_dy; 
+//	infoHeader.biPlanes        = 1; 
+//	infoHeader.biBitCount      = BMP_DEPTH; 
+//	infoHeader.biCompression   = BI_RGB; 
+//	infoHeader.biSizeImage     = 0; 
+//	infoHeader.biXPelsPerMeter = 0; 
+//	infoHeader.biYPelsPerMeter = 0; 
+//	infoHeader.biClrUsed       = 0; 
+//	infoHeader.biClrImportant  = 0; 
+//
+//	file.write((char*)&fileHeader, sizeof(fileHeader)); 
+//	file.write((char*)&infoHeader, sizeof(infoHeader)); 
+//
+//	// dibsection information 
+//	BITMAPINFO info; 
+//	info.bmiHeader = infoHeader;  
+//
+//	// ------------------ 
+//	// THE IMPORTANT CODE 
+//	// ------------------ 
+//	// create a dibsection and blit the window contents to the bitmap 
+//	auto winDC = GetWindowDC(); 
+//	auto memDC = CreateCompatibleDC(winDC->m_hDC); 
+//	BYTE* memory = 0; 
+//	HBITMAP bitmap = CreateDIBSection(winDC->m_hDC, &info, DIB_RGB_COLORS, (void**)&memory, 0, 0); 
+//	SelectObject(memDC, bitmap); 
+//	BitBlt(memDC, 0, 0, bitmap_dx, bitmap_dy, winDC->m_hDC, 0, 0, SRCCOPY); 
+//	DeleteDC(memDC); 
+//	ReleaseDC(winDC); 
+//
+//	// save dibsection data 
+//	int bytes = (((BMP_DEPTH*bitmap_dx + 31) & (~31))/8)*bitmap_dy; 
+//	file.write((const char*)memory, bytes); 
+//	file.close();
+//	DeleteObject(bitmap); 
 
 	//Network Send
-	char testData[100];
-	uint32_t testLen = 100;
-	for(auto i=0; i<testLen; ++i)
-	{
-		testData[i] = 'a'+i%26;
-	}
+	//char testData[100];
+	//uint32_t testLen = 100;
+	//for(auto i=0; i<testLen; ++i)
+	//{
+	//	testData[i] = 'a'+i%26;
+	//}
 	//sprintf(testData, "%s%d", __DATE__, 12345678);
+
+	//Pattern Information
+	m_PatInfo.totalLen = TEST_PAT_WID * TEST_PAT_HGT / 8;
+	m_PatInfo.curLen = 0;
+	m_PatInfo.curOff = 0;
+	m_PatInfo.wid = TEST_PAT_WID;
+	m_PatInfo.hgt = TEST_PAT_HGT;
+#define SINGLE_PKT_LEN	1024
 
 	sockaddr_in dest;
 	sockaddr_in local;
@@ -477,7 +492,7 @@ void ZDlg::CaptureScreen(const char* filename)
 
 	local.sin_family = AF_INET;
 	local.sin_addr.s_addr = inet_addr( "192.168.1.100" );
-	local.sin_port = htons( UDP_DATA_PORT );//0-> choose any
+	local.sin_port = 0;//htons( UDP_DATA_PORT );//0-> choose any
 
 	dest.sin_family = AF_INET;
 	char tmpAddr[16];
@@ -493,9 +508,32 @@ void ZDlg::CaptureScreen(const char* filename)
 	SOCKET s = socket( AF_INET, SOCK_DGRAM, IPPROTO_UDP );
 	// bind to the local address
 	bind( s, (sockaddr *)&local, sizeof(local) );
-	// send the pkt
-	int ret = sendto( s, testData, testLen, 0, (sockaddr *)&dest, sizeof(dest) );
-#undef BMP_DEPTH
+	
+	for(auto t=0; t<m_SendTime; ++t)
+	{
+		while(m_PatInfo.curOff < m_PatInfo.totalLen)
+		{
+			m_PatInfo.curLen = min(SINGLE_PKT_LEN, m_PatInfo.totalLen - m_PatInfo.curOff);
+
+			//Send Info as separate packet
+			auto infoRet = sendto( s, 
+				(const char*)&m_PatInfo, 
+				sizeof(m_PatInfo),
+				0, 
+				(sockaddr *)&dest,
+				sizeof(dest) );
+
+			//Send the data
+			auto ret = sendto( s, 
+				((const char*)m_PatBuf) + m_PatInfo.curOff, 
+				m_PatInfo.curLen,
+				0, 
+				(sockaddr *)&dest,
+				sizeof(dest) );
+			m_PatInfo.curOff += ret;
+		}
+	}
+//#undef BMP_DEPTH
 }
 
 const uint16_t BMPFileType = 0x4D42;//Always "BM"
@@ -650,4 +688,151 @@ void ZDlg::CaptureScreenMono(const char* filename)
 	ReleaseDC(winDC); 
 	DeleteObject(bitmap); 
 #undef BMP_DEPTH
+}
+
+void ZDlg::OnBnClickedPat0()
+{
+	m_Pat = 0;
+	//CString tmpStr;
+	//tmpStr.Format("%s_%d", __FUNCTION__, m_Pat);
+	//AfxMessageBox(tmpStr);
+	for(auto line=0; line<TEST_PAT_HGT; ++line)
+	{
+		for(auto wid=0; wid<TEST_PAT_WID/(2*8); ++wid)
+		{
+			m_PatBuf[line*TEST_PAT_WID/(2*8) + wid] = 0xFF00;
+		}
+	}
+}
+
+
+void ZDlg::OnBnClickedPat1()
+{
+	m_Pat = 1;
+	for(auto line=0; line<TEST_PAT_HGT; ++line)
+	{
+		for(auto wid=0; wid<TEST_PAT_WID/(2*8); ++wid)
+		{
+			m_PatBuf[line*TEST_PAT_WID/(2*8) + wid] = 0xF0F0;
+		}
+	}
+}
+
+
+void ZDlg::OnBnClickedPat2()
+{
+	m_Pat = 2;
+	for(auto line=0; line<TEST_PAT_HGT; ++line)
+	{
+		for(auto wid=0; wid<TEST_PAT_WID/(2*8); ++wid)
+		{
+			m_PatBuf[line*TEST_PAT_WID/(2*8) + wid] = 0xCCCC;
+		}
+	}
+}
+
+
+void ZDlg::OnBnClickedPat3()
+{
+	m_Pat = 3;
+	for(auto line=0; line<TEST_PAT_HGT; ++line)
+	{
+		for(auto wid=0; wid<TEST_PAT_WID/(2*8); ++wid)
+		{
+			m_PatBuf[line*TEST_PAT_WID/(2*8) + wid] = 0xAAAA;
+		}
+	}
+}
+
+
+void ZDlg::OnBnClickedPat4()
+{
+	m_Pat = 4;
+	for(auto line=0; line<TEST_PAT_HGT; ++line)
+	{
+		for(auto wid=0; wid<(TEST_PAT_WID/(2*8))/2; ++wid)
+		{	
+			if(0 == wid%2)
+			{
+				m_PatBuf[line*TEST_PAT_WID/(2*8) + wid*2] = 0xFF00;
+				m_PatBuf[line*TEST_PAT_WID/(2*8) + wid*2+1] = 0;
+			}
+			else
+			{
+				m_PatBuf[line*TEST_PAT_WID/(2*8) + wid*2] = 0;
+				m_PatBuf[line*TEST_PAT_WID/(2*8) + wid*2+1] = 0xFF00;
+			}
+		}
+	}
+}
+
+//打印字体试一下子
+//纵向,倒序, 16x16
+//For Every Font, need to rearrange
+//^^^^^^^^
+//^^^^^^^^  
+uint8_t hanzi_8_test[]={
+0x10,0x10,0x10,0xFF,0x10,0x90,0x04,0x04,0x04,0x04,0xFC,0x04,0x04,0x04,0x04,0x00,
+0x04,0x44,0x82,0x7F,0x01,0x00,0x00,0x00,0x40,0x80,0x7F,0x00,0x00,0x00,0x00,0x00,
+0x00,0xFC,0x44,0x44,0x44,0x42,0x42,0x00,0xFC,0x04,0x04,0x04,0x04,0xFC,0x00,0x00,
+0x00,0x1F,0x10,0x10,0x08,0x08,0x08,0x00,0xFF,0x00,0x08,0x10,0x08,0x07,0x00,0x00,
+0x10,0x0C,0x04,0x24,0x24,0x24,0x25,0x26,0xA4,0x64,0x24,0x04,0x04,0x14,0x0C,0x00,
+0x02,0x02,0x02,0x02,0x02,0x42,0x82,0x7F,0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x00,
+0x00,0x80,0x60,0xF8,0x07,0x10,0x10,0x10,0xD0,0xFF,0xD0,0x10,0x10,0x10,0x00,0x00,
+0x01,0x00,0x00,0xFF,0x10,0x08,0x04,0x0B,0x08,0xFF,0x08,0x0B,0x04,0x08,0x10,0x00,
+0x40,0x40,0x42,0xCC,0x00,0x90,0x90,0x90,0x90,0x90,0xFF,0x10,0x11,0x16,0x10,0x00,
+0x00,0x00,0x00,0x3F,0x10,0x28,0x60,0x3F,0x10,0x10,0x01,0x0E,0x30,0x40,0xF0,0x00,
+0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x00,
+0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+0x02,0x02,0x02,0x02,0x02,0x02,0xFE,0x02,0x02,0x42,0x82,0x02,0x02,0x02,0x02,0x00,
+0x00,0x00,0x00,0x00,0x00,0x00,0xFF,0x00,0x00,0x00,0x00,0x01,0x06,0x00,0x00,0x00,
+0x80,0x82,0x82,0x82,0x82,0x82,0x82,0xE2,0xA2,0x92,0x8A,0x86,0x82,0x80,0x80,0x00,
+0x00,0x00,0x00,0x00,0x00,0x40,0x80,0x7F,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,};
+
+void ZDlg::OnBnClickedPat5()
+{
+	m_Pat = 5;
+	//ReRange
+	uint16_t tmpLine[16];
+	for(auto i=0; i<8; ++i)
+	{
+		for(auto j=0; j<16; ++j)
+		{
+			tmpLine[j] = hanzi_8_test[i*32 + j] + (((uint16_t)hanzi_8_test[i*32 + j+16])<<8);
+		}
+		memcpy((void*)&hanzi_8_test[i*32], (const void*)tmpLine, sizeof(tmpLine));
+	}
+
+	//Font Test
+	memcpy((void*)&m_PatBuf[TEST_PAT_WID * 0 / (8 * sizeof(uint16_t))],
+		hanzi_8_test,
+		sizeof(hanzi_8_test));
+	//Bliank Test
+	memset((void*)&m_PatBuf[TEST_PAT_WID * 1 / (8 * sizeof(uint16_t))],
+		0,
+		sizeof(hanzi_8_test));
+	//Font Test
+	memcpy((void*)&m_PatBuf[TEST_PAT_WID * 2 / (8 * sizeof(uint16_t))],
+		hanzi_8_test,
+		sizeof(hanzi_8_test));
+	//Bliank Test
+	memset((void*)&m_PatBuf[TEST_PAT_WID * 3 / (8 * sizeof(uint16_t))],
+		0,
+		sizeof(hanzi_8_test));
+	//Font Test
+	memcpy((void*)&m_PatBuf[TEST_PAT_WID * 4 / (8 * sizeof(uint16_t))],
+		hanzi_8_test,
+		sizeof(hanzi_8_test));
+	//Bliank Test
+	memset((void*)&m_PatBuf[TEST_PAT_WID * 5 / (8 * sizeof(uint16_t))],
+		0,
+		sizeof(hanzi_8_test));
+	//Font Test
+	memcpy((void*)&m_PatBuf[TEST_PAT_WID * 6 / (8 * sizeof(uint16_t))],
+		hanzi_8_test,
+		sizeof(hanzi_8_test));
+	//Bliank Test
+	memset((void*)&m_PatBuf[TEST_PAT_WID * 7 / (8 * sizeof(uint16_t))],
+		0,
+		sizeof(hanzi_8_test));
 }

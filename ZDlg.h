@@ -64,6 +64,18 @@ typedef struct strSimpleBMP16Header{
 #define LCD_PTS_TOTAL	((uint32_t)LCD_W*LCD_H)
 #define TEST_DPT	1	//16
 
+#define TEST_PAT_WID	128
+#define TEST_PAT_HGT	128
+
+struct PatInfo
+{
+	uint32_t totalLen;
+	uint32_t curOff;
+	uint16_t curLen;
+	uint16_t wid;
+	uint16_t hgt;
+};
+
 class ZDlg : public CDialog
 {
 // Construction
@@ -128,6 +140,17 @@ public:
 	DWORD m_BoardIP;
 	UINT m_SendTime;
 	uint32_t m_lastWdt;
+	int m_Pat;
+
+	PatInfo m_PatInfo;
+	uint16_t m_PatBuf[TEST_PAT_WID * TEST_PAT_HGT / (8 * sizeof(uint16_t))];
+
+	afx_msg void OnBnClickedPat0();
+	afx_msg void OnBnClickedPat1();
+	afx_msg void OnBnClickedPat2();
+	afx_msg void OnBnClickedPat3();
+	afx_msg void OnBnClickedPat4();
+	afx_msg void OnBnClickedPat5();
 };
 
 //{{AFX_INSERT_LOCATION}}
