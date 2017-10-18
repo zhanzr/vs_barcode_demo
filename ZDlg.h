@@ -64,8 +64,8 @@ typedef struct strSimpleBMP16Header{
 #define LCD_PTS_TOTAL	((uint32_t)LCD_W*LCD_H)
 #define TEST_DPT	1	//16
 
-#define TEST_PAT_WID	128
-#define TEST_PAT_HGT	128
+#define TEST_PAT_WID	160
+#define TEST_PAT_HGT	1000
 
 struct PatInfo
 {
