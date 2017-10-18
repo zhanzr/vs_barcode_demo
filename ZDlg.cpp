@@ -464,7 +464,11 @@ void ZDlg::CaptureScreen(const char* filename)
 	//Network Send
 	char testData[100];
 	uint32_t testLen = 100;
-	sprintf(testData, "%s%d", __DATE__, 12345678);
+	for(auto i=0; i<testLen; ++i)
+	{
+		testData[i] = 'a'+i%26;
+	}
+	//sprintf(testData, "%s%d", __DATE__, 12345678);
 
 	sockaddr_in dest;
 	sockaddr_in local;
@@ -473,7 +477,7 @@ void ZDlg::CaptureScreen(const char* filename)
 
 	local.sin_family = AF_INET;
 	local.sin_addr.s_addr = inet_addr( "192.168.1.100" );
-	local.sin_port = 0; // choose any
+	local.sin_port = htons( UDP_DATA_PORT );//0-> choose any
 
 	dest.sin_family = AF_INET;
 	char tmpAddr[16];
