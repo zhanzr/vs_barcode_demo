@@ -34,6 +34,7 @@
 
 // Link with ws2_32.lib
 #pragma comment(lib, "Ws2_32.lib")
+#pragma comment(lib, "windowscodecs.lib")
 
 using namespace std;
 

@@ -159,7 +159,7 @@ BOOL ZDlg::OnInitDialog()
 
 	UpdateData(FALSE);
 
-	MoveWindow(400, 400, 1150, 256, TRUE);
+	MoveWindow(400, 400, 1160, 256, TRUE);
 
 	return 1;
 }
@@ -404,8 +404,8 @@ void ZDlg::CaptureScreen(const char* filename)
 	GetWindowRect(&windowRect); 
 
 	// bitmap dimensions 
-	//int bitmap_dx = windowRect.right - windowRect.left; 
-	auto bitmap_dx = m_lastWdt * 2; 
+	auto bitmap_dx = windowRect.right - windowRect.left; 
+	//auto bitmap_dx = m_lastWdt * 2; 
 	auto bitmap_dy = windowRect.bottom - windowRect.top; 
 
 	// create file 
@@ -458,7 +458,7 @@ void ZDlg::CaptureScreen(const char* filename)
 	// save dibsection data 
 	int bytes = (((BMP_DEPTH*bitmap_dx + 31) & (~31))/8)*bitmap_dy; 
 	file.write((const char*)memory, bytes); 
-
+	file.close();
 	DeleteObject(bitmap); 
 
 	//Network Send
@@ -498,6 +498,8 @@ void ZDlg::CaptureScreen(const char* filename)
 #undef BMP_DEPTH
 }
 
+const uint16_t BMPFileType = 0x4D42;//Always "BM"
+
 void ZDlg::CaptureScreenMono(const char* filename) 
 { 
 #define	BMP_DEPTH	16
@@ -506,8 +508,9 @@ void ZDlg::CaptureScreenMono(const char* filename)
 	GetWindowRect(&windowRect); 
 
 	// bitmap dimensions 
-	//int bitmap_dx = windowRect.right - windowRect.left; 
-	auto bitmap_dx = m_lastWdt * 2; 
+	int bitmap_dx = windowRect.right - windowRect.left; 
+	//auto bitmap_dx = (m_lastWdt * 2)/8; 
+	//bitmap_dx *= 8;
 	auto bitmap_dy = windowRect.bottom - windowRect.top; 
 
 	// create file 
@@ -520,10 +523,10 @@ void ZDlg::CaptureScreenMono(const char* filename)
 	BITMAPINFOHEADER infoHeader; 
 
 	fileHeader.bfType      = 0x4d42; 
-	fileHeader.bfSize      = 0; 
 	fileHeader.bfReserved1 = 0; 
 	fileHeader.bfReserved2 = 0; 
 	fileHeader.bfOffBits   = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER); 
+	fileHeader.bfSize      = fileHeader.bfOffBits + bitmap_dx*bitmap_dy*BMP_DEPTH/8; 
 
 	infoHeader.biSize          = sizeof(infoHeader); 
 	infoHeader.biWidth         = bitmap_dx; 
@@ -554,13 +557,97 @@ void ZDlg::CaptureScreenMono(const char* filename)
 	HBITMAP bitmap = CreateDIBSection(winDC->m_hDC, &info, DIB_RGB_COLORS, (void**)&memory, 0, 0); 
 	SelectObject(memDC, bitmap); 
 	BitBlt(memDC, 0, 0, bitmap_dx, bitmap_dy, winDC->m_hDC, 0, 0, SRCCOPY); 
-	DeleteDC(memDC); 
-	ReleaseDC(winDC); 
 
 	// save dibsection data 
 	int bytes = (((BMP_DEPTH*bitmap_dx + 31) & (~31))/8)*bitmap_dy; 
 	file.write((const char*)memory, bytes); 
+	file.close();
 
+	//Test Monochrome bitmap
+	SimpleBMP16Header sbh;
+    uint8_t tmpPix;
+    uint32_t bw = 0;
+	FILE* fOutputBin;
+	uint32_t i;
+	uint32_t j;
+	
+	char mono_name[256];
+	sprintf(mono_name, "mono_%s", filename);
+	fOutputBin = fopen(mono_name, "wb");
+	sbh.unused1 = 0;
+	sbh.unused2 = 0;
+    sbh.InfoSize = 0x28;
+    sbh.DataOff = sbh.InfoSize + 0x16;
+    sbh.FileSize = (sbh.DataOff + bitmap_dx * bitmap_dy * TEST_DPT)/8;
+
+    sbh.Wid = bitmap_dx;
+    sbh.Hgt = bitmap_dy;
+
+    sbh.PaneNum = 1;
+    sbh.ColorDepth = TEST_DPT;
+
+    sbh.CompressMethod = BI_RGB ;//BI_RGB
+    sbh.BitSize = (bitmap_dx * bitmap_dy * TEST_DPT) / 8;
+    sbh.XDPI = 0;//0x0B13;
+    sbh.YDPI = 0;//0x0B13;
+    sbh.ColorInPlatte = 0;
+    sbh.ImportantColor = 0;
+
+    //sbh.R_Mask = 0xF800;
+    //sbh.G_Mask = 0x07E0;
+    //sbh.B_Mask = 0x001F;
+    sbh.Bit_Mask = 0;
+    sbh.A_Mask = 0x00ffffff;
+	
+    fwrite(&BMPFileType, sizeof(BMPFileType), 1, fOutputBin);
+	fwrite(&sbh, sizeof(sbh), 1, fOutputBin);
+
+	
+	for(auto pVet = 0; pVet<sbh.Hgt; ++pVet)
+	{
+		tmpPix = 0xa3;
+		for(auto j=0; j<(sbh.Wid * TEST_DPT)/8; j++)
+        {
+			//auto Pix7 = winDC->GetPixel(j*8 + 0, pVet);
+			//auto Pix6 = winDC->GetPixel(j*8 + 1, pVet);
+			//auto Pix5 = winDC->GetPixel(j*8 + 2, pVet);
+			//auto Pix4 = winDC->GetPixel(j*8 + 3, pVet);
+			//auto Pix3 = winDC->GetPixel(j*8 + 4, pVet);
+			//auto Pix2 = winDC->GetPixel(j*8 + 5, pVet);
+			//auto Pix1 = winDC->GetPixel(j*8 + 6, pVet);
+			//auto Pix0 = winDC->GetPixel(j*8 + 7, pVet);
+            fwrite(&tmpPix, sizeof(tmpPix), 1, fOutputBin);
+        }
+
+		//for(auto tmp = 0; tmp < 8; ++tmp)
+		//{
+		//	uint16_t cWord = *(uint16_t*)(memory + pByte * (BMP_DEPTH/TEST_DPT) + tmp * sizeof(uint16_t));
+		//	//auto Red = (cWord>>11)&0x1F;
+		//	//auto Green = (cWord>>5)&0x3F;
+		//	//auto Blue = (cWord)&0x1F;
+		//	//auto Y = 0.299 * Red + 0.587 * Green/2 + 0.114 * Blue;
+		//	//if(Y>16)
+		//	//{
+		//	//	tmpPix |= (1<<(7-tmp));
+		//	//}
+		//	
+		//	if(cWord >= 0x7BDE)
+		//	{
+		//		//tmpPix |= (1<<(7-tmp));
+		//		tmpPix |= (1<<(tmp));
+		//	}
+		//}
+
+		////tmpPix = 0xcc;
+
+		//fwrite(&tmpPix, sizeof(tmpPix), 1, fOutputBin);
+	}
+
+	fseek(fOutputBin, sbh.DataOff + bitmap_dx * bitmap_dy * TEST_DPT/8, SEEK_SET);
+    fclose(fOutputBin);
+
+	DeleteDC(memDC); 
+	ReleaseDC(winDC); 
 	DeleteObject(bitmap); 
 #undef BMP_DEPTH
 }
