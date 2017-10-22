@@ -21,6 +21,7 @@ ZDlg::ZDlg(CWnd* pParent /*=NULL*/)
 	, m_SendTime(0)
 	, m_BoardIP(0)
 	, m_Pat(0)
+	, m_SelfIp(0)
 {
 	//{{AFX_DATA_INIT(ZDlg)
 	//}}AFX_DATA_INIT
@@ -43,6 +44,7 @@ void ZDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_REPEAT, m_SendTime);
 	DDV_MinMaxUInt(pDX, m_SendTime, 1, 100000);
 	DDX_IPAddress(pDX, IDC_IP_BOARD, m_BoardIP);
+	DDX_IPAddress(pDX, IDC_IP_SELF, m_SelfIp);
 }
 
 BEGIN_MESSAGE_MAP(ZDlg, CDialog)
@@ -159,10 +161,10 @@ BOOL ZDlg::OnInitDialog()
 
 	m_SendTime = 1;
 
-	m_BoardIP = (UINT)192<<24;
-	m_BoardIP += (UINT)168<<16;
-	m_BoardIP += (UINT)1<<8;
-	m_BoardIP += 30;
+	m_BoardIP = DEFAULT_TARGET_IP_W;
+	m_SelfIp = DEFAULT_SELF_IP_W;
+
+	CheckRadioButton(IDC_PAT0, IDC_PAT5, IDC_PAT0);
 
 	UpdateData(FALSE);
 
@@ -371,10 +373,6 @@ void ZDlg::OnBnClickedsend()
 		m_SendTime = 9999;
 	}
 
-	//CString tmpStr;
-	//tmpStr.Format(_T("%08X %d"), m_BoardIP, m_SendTime);
-	//AfxMessageBox(tmpStr);
-
 	CString csStyle;
 	cmb_Style.GetWindowText(csStyle);
 	CString csCode;
@@ -487,15 +485,22 @@ void ZDlg::CaptureScreen(const char* filename)
 
 	sockaddr_in dest;
 	sockaddr_in local;
+	char tmpAddr[16];
 	WSAData data;
 	WSAStartup( MAKEWORD( 2, 2 ), &data );
 
 	local.sin_family = AF_INET;
-	local.sin_addr.s_addr = inet_addr( "192.168.1.100" );
+	
+	sprintf(tmpAddr, "%d.%d.%d.%d",
+		0x000000ff & (m_SelfIp>>24),
+		0x000000ff & (m_SelfIp>>16), 
+		0x000000ff & (m_SelfIp>>8),
+		0x000000ff &m_SelfIp);
+	local.sin_addr.s_addr = inet_addr( tmpAddr );
 	local.sin_port = 0;//htons( UDP_DATA_PORT );//0-> choose any
 
+	UpdateData(TRUE);
 	dest.sin_family = AF_INET;
-	char tmpAddr[16];
 	sprintf(tmpAddr, "%d.%d.%d.%d",
 		0x000000ff & (m_BoardIP>>24),
 		0x000000ff & (m_BoardIP>>16), 
@@ -703,6 +708,8 @@ void ZDlg::OnBnClickedPat0()
 			m_PatBuf[line*TEST_PAT_WID/(2*8) + wid] = 0xFF00;
 		}
 	}
+
+	TRACE("%d\n", m_Pat);
 }
 
 
@@ -716,8 +723,8 @@ void ZDlg::OnBnClickedPat1()
 			m_PatBuf[line*TEST_PAT_WID/(2*8) + wid] = 0xF0F0;
 		}
 	}
+	TRACE("%d\n", m_Pat);
 }
-
 
 void ZDlg::OnBnClickedPat2()
 {
@@ -729,8 +736,8 @@ void ZDlg::OnBnClickedPat2()
 			m_PatBuf[line*TEST_PAT_WID/(2*8) + wid] = 0xCCCC;
 		}
 	}
+	TRACE("%d\n", m_Pat);
 }
-
 
 void ZDlg::OnBnClickedPat3()
 {
@@ -742,8 +749,8 @@ void ZDlg::OnBnClickedPat3()
 			m_PatBuf[line*TEST_PAT_WID/(2*8) + wid] = 0xAAAA;
 		}
 	}
+	TRACE("%d\n", m_Pat);
 }
-
 
 void ZDlg::OnBnClickedPat4()
 {
@@ -764,6 +771,7 @@ void ZDlg::OnBnClickedPat4()
 			}
 		}
 	}
+	TRACE("%d\n", m_Pat);
 }
 
 //打印字体试一下子
@@ -835,4 +843,6 @@ void ZDlg::OnBnClickedPat5()
 	memset((void*)&m_PatBuf[TEST_PAT_WID * 7 / (8 * sizeof(uint16_t))],
 		0,
 		sizeof(hanzi_8_test));
+	TRACE("%d\n", m_Pat);
 }
+

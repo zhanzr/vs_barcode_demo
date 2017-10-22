@@ -13,7 +13,8 @@
 #include "EditMove.h"
 
 #define	UDP_DATA_PORT	8090
-
+#define DEFAULT_TARGET_IP_W	(((UINT)192<<24) + ((UINT)168<<16) + ((UINT)0<<8) + 105)
+#define DEFAULT_SELF_IP_W	(((UINT)192<<24) + ((UINT)168<<16) + ((UINT)0<<8) + 122)
 
 typedef struct strSimpleBMP16Header{
 		uint32_t FileSize;//DataOff+Wid*Hgt*2
@@ -138,6 +139,7 @@ public:
 	void CaptureScreenMono(const char* filename);
 
 	DWORD m_BoardIP;
+	DWORD m_SelfIp;
 	UINT m_SendTime;
 	uint32_t m_lastWdt;
 	int m_Pat;
